@@ -1,19 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Register</title>
-</head>
-<body>
-<h1>Register Page</h1>
-<form method="POST" action="">
-    {{form.hidden_tag()}}<br>
-    {{form.username}}<br>
-    {{form.password}}<br>
-    {{form.role}}<br>
-    {{form.submit}}<br>
-</form><br>
-<a href="{{url_for('login')}}">Already have an Account? Login</a><br>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block body %}
+
+{% from "includes/formhelpers.html" import render_field %}
+
+<h4>
+    <strong>
+        Register
+    </strong>
+</h4>
+<hr>
+
+<form method="POST">
+
+    {{ render_field(form.name, class="form-control") }}
+    {{ render_field(form.username, class="form-control") }}
+    {{ render_field(form.email, class="form-control") }}
+    {{ render_field(form.password, class="form-control") }}
+    {{ render_field(form.confirm, class="form-control") }}
+
+    <button type="submit" class="btn btn-primary">Register</button>
+</form>
+
+<hr>
+
+<a href="/login">Login into existing account!</a>
+
+{% endblock body %}
