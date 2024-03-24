@@ -2,6 +2,7 @@ from flask import Flask, render_template, url_for, redirect, flash, request, ses
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, EmailField, validators
+from wtforms.fields.choices import SelectField
 from wtforms.form import Form
 from wtforms.validators import InputRequired, Length, ValidationError, Email
 from flask_sqlalchemy import SQLAlchemy
@@ -17,11 +18,13 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    name= db.Column(db.String(15), unique=True)
+    name= db.Column(db.String(15))
 
     username = db.Column(db.String(15), unique=True)
 
     email = db.Column(db.String(50), unique=True)
+
+    role = db.Column(db.String(50))
 
     password = db.Column(db.String(256))
 
@@ -83,7 +86,10 @@ def register():
 
             email=form.email.data,
 
-            password=hashed_password)
+            password=hashed_password,
+
+            role=form.role.data
+        )
 
         db.session.add(new_user)
 
@@ -102,8 +108,7 @@ class RegisterForm(Form):
     name = StringField("Name", validators=[validators.Length(min=3, max=25),
                                          validators.DataRequired(message="Please Fill This Field")])
 
-    username = StringField("Username", validators=[validators.Length(min=3, max=25),
-                                                   validators.DataRequired(message="Please Fill This Field")])
+    username = StringField("Username", validators=[validators.Length(min=3, max=25)])
 
     email = StringField("Email", validators=[validators.Email(message="Please enter a valid email address")])
 
@@ -113,7 +118,8 @@ class RegisterForm(Form):
 
         validators.EqualTo(fieldname="confirm", message="Your Passwords Do Not Match")
     ])
-
+    role = SelectField("Role", choices=[('admin', 'Admin'), ('seller', 'Seller')],
+                       validators=[validators.DataRequired(message="Please Select a Role")])
     confirm = PasswordField("Confirm Password", validators=[validators.DataRequired(message="Please Fill This Field")])
 
 
